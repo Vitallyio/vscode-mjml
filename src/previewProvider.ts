@@ -1,7 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
-import * as Handlebars from 'handlebars';
+import { template } from 'lodash';
 
 import helper from "./helper";
 
@@ -173,8 +173,12 @@ class PreviewContentProvider implements vscode.TextDocumentContentProvider {
 
             if (dataSource) {
                 this._dataFileName = dataFileName;
-                const template = Handlebars.compile(html);
-                html = template(JSON.parse(dataSource));
+                try {
+                    const compiled = template(html);
+                    html = compiled(JSON.parse(dataSource));
+                } catch (err) {
+                    return this.error(err.toString());
+                }
             }
 
             return helper.fixLinks(html);
