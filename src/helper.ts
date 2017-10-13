@@ -6,6 +6,7 @@ import * as path from "path";
 import fileUrl = require("file-url");
 import { mjml2html } from "mjml";
 import { existsSync, readFileSync } from "fs";
+import { template } from 'lodash';
 
 export default class Helper {
 
@@ -22,6 +23,8 @@ export default class Helper {
         );
 
         if (content) {
+            content = this.compileHtml(content);
+
             if (fixLinks != undefined && fixLinks) {
                 content = this.fixLinks(content);
             }
@@ -53,6 +56,18 @@ export default class Helper {
         }
         catch (e) {
             return;
+        }
+    }
+
+    static compileHtml(html: string): string {
+        let currentFileName = vscode.window.activeTextEditor.document.fileName;
+        let dataFileName = currentFileName + '.json';
+
+        const dataSource = this.resolveFileOrText(dataFileName);
+
+        if (dataSource) {
+            const compiled = template(html);
+            return compiled(JSON.parse(dataSource));
         }
     }
 
