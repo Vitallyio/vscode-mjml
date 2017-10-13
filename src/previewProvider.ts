@@ -1,6 +1,7 @@
 "use strict";
 
 import * as vscode from "vscode";
+import * as Handlebars from 'handlebars';
 
 import helper from "./helper";
 
@@ -128,6 +129,7 @@ class PreviewContentProvider implements vscode.TextDocumentContentProvider {
 
     private _onDidChange: vscode.EventEmitter<vscode.Uri> = new vscode.EventEmitter<vscode.Uri>();
     private document: vscode.TextDocument;
+    private _dataFileName: string;
 
     constructor(document: vscode.TextDocument) {
         this.document = document;
@@ -157,6 +159,24 @@ class PreviewContentProvider implements vscode.TextDocumentContentProvider {
         let html: string = helper.mjml2html(this.document.getText(), false, false);
 
         if (html) {
+            let currentFileName = vscode.window.activeTextEditor.document.fileName;
+            let dataFileName: string;
+
+            if (currentFileName === this._dataFileName) {
+                // User switched to context - just use cached variable
+                dataFileName = this._dataFileName;
+            } else {
+                dataFileName = currentFileName + '.json';
+            }
+
+            const dataSource = helper.resolveFileOrText(dataFileName);
+
+            if (dataSource) {
+                this._dataFileName = dataFileName;
+                const template = Handlebars.compile(html);
+                html = template(JSON.parse(dataSource));
+            }
+
             return helper.fixLinks(html);
         }
 

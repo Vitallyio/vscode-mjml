@@ -5,6 +5,7 @@ import * as path from "path";
 
 import fileUrl = require("file-url");
 import { mjml2html } from "mjml";
+import { existsSync, readFileSync } from "fs";
 
 export default class Helper {
 
@@ -73,4 +74,16 @@ export default class Helper {
         );
     }
 
+    static resolveFileOrText(fileName: string): string | undefined {
+        let document = vscode.workspace.textDocuments.find(e => e.fileName === fileName);
+
+        if (document) {
+            return document.getText();
+        }
+        if (path.dirname(fileName) && existsSync(fileName)) {
+            return readFileSync(fileName, "utf8");
+        }
+
+        return undefined;
+    }
 }
