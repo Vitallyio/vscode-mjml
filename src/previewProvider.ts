@@ -146,24 +146,27 @@ class PreviewContentProvider implements vscode.TextDocumentContentProvider {
         }
     }
 
-    public provideTextDocumentContent(uri: vscode.Uri): string {
+    public async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
         if (this.document.languageId !== "mjml") {
-            return this.error("Active editor doesn't show a MJML document.");
+            return Promise.resolve(this.error("Active editor doesn't show a MJML document."));
         }
 
-        return this.renderMJML();
+        const mjml = await this.renderMJML();
+        return mjml;
     }
 
-    private renderMJML(): string {
-        let html: string = helper.mjml2html(this.document.getText(), false, false);
+    private async renderMJML(): Promise<string> {
+        let html: string;
+
+        try {
+            html = await helper.compileHtml(this.document.getText());
+        } catch (err) {
+            return this.error(err.toString());
+        }
+
+        html = helper.mjml2html(html, false, false);
 
         if (html) {
-            try {
-                html = helper.compileHtml(html);
-            } catch (err) {
-                return this.error(err.toString());
-            }
-
             return helper.fixLinks(html);
         }
 

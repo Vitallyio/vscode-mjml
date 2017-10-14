@@ -6,25 +6,25 @@ import * as path from "path";
 import fileUrl = require("file-url");
 import { mjml2html } from "mjml";
 import { existsSync, readFileSync } from "fs";
-import { template } from 'lodash';
+import * as ejs from 'ejs';
 
 export default class Helper {
 
-    static renderMJML(cb: (content: string) => any, fixLinks?: boolean, minify?: boolean, beautify?: boolean): any {
+    static async renderMJML(cb: (content: string) => any, fixLinks?: boolean, minify?: boolean, beautify?: boolean): Promise<any> {
         if (!(this.isMJMLFile(vscode.window.activeTextEditor.document))) {
             vscode.window.showWarningMessage("This is not a MJML document!");
             return;
         }
 
-        let content: string = this.mjml2html(
-            vscode.window.activeTextEditor.document.getText(),
+        let content = await this.compileHtml(vscode.window.activeTextEditor.document.getText());
+
+        content = this.mjml2html(
+            content,
             minify != undefined ? minify : vscode.workspace.getConfiguration("mjml").minifyHtmlOutput,
             beautify != undefined ? beautify : vscode.workspace.getConfiguration("mjml").beautifyHtmlOutput,
         );
 
         if (content) {
-            content = this.compileHtml(content);
-
             if (fixLinks != undefined && fixLinks) {
                 content = this.fixLinks(content);
             }
@@ -59,16 +59,27 @@ export default class Helper {
         }
     }
 
-    static compileHtml(html: string): string {
+    static async compileHtml(html: string): Promise<string> {
         let currentFileName = vscode.window.activeTextEditor.document.fileName;
-        let dataFileName = currentFileName + '.json';
+        const fileFolder = currentFileName.substring(0, currentFileName.lastIndexOf("/"));
+        let dataFileName = `${fileFolder}/preview.json`;
 
         const dataSource = this.resolveFileOrText(dataFileName);
 
         if (dataSource) {
-            const compiled = template(html);
-            return compiled(JSON.parse(dataSource));
+            const config = JSON.parse(dataSource);
+            const data = config.data;
+
+            if (config.helpers) {
+                const helperFileName = `${fileFolder}/${config.helpers}`;
+                const helpers = await import(helperFileName);
+                data.helpers = helpers;
+            }
+            const compiled = ejs.compile(html, { filename: currentFileName });
+            return compiled(data);
         }
+
+        return html;
     }
 
     static getCWD(): string {
