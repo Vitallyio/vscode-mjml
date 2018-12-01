@@ -1,5 +1,75 @@
 # Change Log
 All notable changes to the "mjml" extension will be documented in this file.
+This project adheres to [Semantic Versioning](https://semver.org/).
+
+### [1.6.0] (2018-10-28)
+* [new] Configuration property `mjml.templateGallery`: Show the template gallery instead of quick pick.
+* [new] Configuration property `mjml.templateGalleryAutoClose`: Automatically close template gallery when selecting a template.
+* [#42](https://github.com/attilabuti/vscode-mjml/issues/42) [#43](https://github.com/attilabuti/vscode-mjml/issues/43): fixed beautify issues.
+* [new] [#47](https://github.com/attilabuti/vscode-mjml/issues/47) `MJML: Version`: Shows the version of MJML.
+* .mjmlconfig is working again.
+* MJML 4.2.0
+* Other improvements and bugfixes.
+
+### [1.5.1] (2018-10-03)
+* [#41](https://github.com/attilabuti/vscode-mjml/issues/41): fixed preview issue.
+* [#40](https://github.com/attilabuti/vscode-mjml/issues/40): fixed comment issue.
+
+### [1.5.0] (2018-09-28)
+* [new] Configuration property `mjml.previewBackgroundColor`: preview background color ([#39](https://github.com/attilabuti/vscode-mjml/issues/39)).
+* [new] Configuration property `mjml.showSaveDialog`: show the save as dialog instead of input box.
+* [new] Configuration property `mjml.autoClosePreview`: automatically close preview when all open MJML documents have been closed.
+* [new] `MJML: Documentation`: open the MJML documentation.
+* [new] `MJML: Search in MJML documentation`: search for the selected mj-element in the MJML documentation.
+* [#38](https://github.com/attilabuti/vscode-mjml/issues/38): added support for beautify mj-style.
+* [#35](https://github.com/attilabuti/vscode-mjml/issues/35): show more useful information on error in sending the email.
+* [#29](https://github.com/attilabuti/vscode-mjml/pull/29): merged pull request.
+* MJML syntax highlight with CSS support.
+* The `PreviewManager` has been completely rewritten.
+* Built-in MJML documentation with `Try it live` support.
+* `Search in MJML documentation` from context menu.
+* MJML 4.1.2
+* Some other improvements.
+
+### [1.4.0] (2018-07-14)
+* [#30](https://github.com/attilabuti/vscode-mjml/issues/30): fixed PhantomJS rebuild issue.
+* [#27](https://github.com/attilabuti/vscode-mjml/issues/27) [#31](https://github.com/attilabuti/vscode-mjml/issues/31): fixed rendering issue.
+* MJML 4.1.0
+* Some other improvements.
+
+### [1.3.0] (2018-05-15)
+* [new] Configuration property `mjml.autoPreview`: Automatically update preview when switching between MJML documents.
+* MJML 4.0.5
+* Various fixes and other improvements.
+
+### [1.2.1] (2018-04-15)
+* [#24](https://github.com/attilabuti/vscode-mjml/issues/24): fixed.
+* Dependency updates.
+
+### [1.2.0] (2018-03-26)
+* [new] Configuration property `mjml.mailer`: send email with Nodemailer or Mailjet. Possible values are 'nodemailer' and 'mailjet'.
+* [new] Configuration property `mjml.nodemailer`: Nodemailer configuration. Please see the [Nodemailer](https://nodemailer.com) documentation for more information.
+* Send email with Nodemailer.
+* Added support for inline images (automatically generated from local images).
+* New preview icon.
+* Some other improvements.
+* MJML 4.0.3
+
+### [1.1.0] (2018-03-18)
+* [new] Configuration property `mjml.exportType`: Specifies the file type of the output file.
+* `MJML: Export HTML`: allows to specify the exported file type (e.g. example.html or .pug).
+* MJML 4.0.2
+
+### [1.0.0] (2018-03-07)
+* [new] `MJML: Migrate`: Migrate a template from MJML 3 to MJML 4.
+* Change to [Semantic Versioning](https://semver.org/).
+* Some fixes.
+* MJML 4.0.0
+
+### [0.1.0] (2017-12-14)
+* [new] `MJML: Beautify`: [#8](https://github.com/attilabuti/vscode-mjml/issues/8) Beautify MJML code.
+* [#15](https://github.com/attilabuti/vscode-mjml/pull/15): fixed preview cache issue.
+* Some other improvements.
 
 ### [0.0.9] (2017-10-06)
 * [new] Configuration property `mjml.screenshotWidths`: Screenshot widths.

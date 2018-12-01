@@ -4,6 +4,7 @@ MJML preview, lint, compile for Visual Studio Code.
 [![GitHub license][license-img]][license-url]
 [![Visual Studio Marketplace][vs-market-version]][vs-market-url]
 [![Visual Studio Marketplace installs][vs-market-installs]][vs-market-url]
+[![Dependencies Status][dependencies-status]][dependencies-status]
 
 ## Features
 
@@ -12,9 +13,13 @@ MJML preview, lint, compile for Visual Studio Code.
 * Export HTML file from MJML.
 * Copy the result HTML to clipboard.
 * Take a screenshot of the rendered MJML document.
-* Send email with Mailjet.
+* Send email with Nodemailer or Mailjet.
 * Code snippets for MJML. Based on [mjml-syntax](https://github.com/mjmlio/mjml-syntax).
 * Fetch official templates. Based on [mjml-app](https://github.com/mjmlio/mjml-app).
+* Beautify MJML code.
+* Migrate a template from MJML 3 to MJML 4.
+* MJML syntax highlight. Based on [mjml-syntax](https://github.com/mjmlio/mjml-syntax).
+* Built-in MJML documentation with `Try it live` support.
 
 ## It looks like this
 
@@ -33,79 +38,198 @@ Start command palette (with `Ctrl+Shift+P` or `F1`) and start typing `MJML`.
 ## Available commands
 
 The following command is available:
+* **MJML: Beautify** or **Format Document** Beautify MJML code.
+* **MJML: Copy HTML** Copy the result HTML to clipboard.
 * **MJML: Export HTML** Export HTML file from MJML.
+* **MJML: Migrate** Migrate a template from MJML 3 to MJML 4.
+* **MJML: Multiple Screenshots** Take multiple screenshots of the rendered MJML document.
 * **MJML: Open Preview to the Side** Opens a preview in a column alongside the current document.
 * **MJML: Screenshot** Take a screenshot of the rendered MJML document, and save it as a file.
-* **MJML: Multiple Screenshots** Take multiple screenshots of the rendered MJML document.
-* **MJML: Copy HTML** Copy the result HTML to clipboard.
-* **MJML: Send Email** Send email with Mailjet.
+* **MJML: Send Email** Send email with Nodemailer or Mailjet.
 * **MJML: Template** Fetch official templates.
+* **MJML: Documentation** open the MJML documentation.
+* **MJML: Search in MJML documentation** search for the selected mj-element in the MJML documentation.
+* **MJML: Version** Shows the version of MJML.
 
 ## Settings
 
 | Name | Default | Description |
 | --- | --- | --- |
+| `mjml.autoPreview` | `false` | Automatically update preview when switching between MJML documents. |
+| `mjml.beautifyHtmlOutput` | `false` | Beautify HTML output. (Works when `mjml.minifyHtmlOutput` aren't enabled.) |
+| `mjml.beautify` | ` ` | Beautify options ([available options](https://github.com/beautify-web/js-beautify#options)). |
+| `mjml.exportType` | `.html` | Specifies the file type of the output file. |
 | `mjml.lintEnable` | `true` | Enable/disable MJML linter (requires restart). |
 | `mjml.lintWhenTyping` | `true` | Whether the linter is run on type or on save. |
-| `mjml.updateWhenTyping` | `true` | Update preview when typing. |
-| `mjml.preserveFocus` | `true` | Preserve focus of Text Editor after preview open. |
-| `mjml.minifyHtmlOutput` | `true` | Minify HTML output. |
-| `mjml.beautifyHtmlOutput` | `false` | Beautify HTML output. (Works when `mjml.minifyHtmlOutput` aren't enabled.) |
-| `mjml.screenshotWidth` | `650` | Screenshot width. |
-| `mjml.screenshotWidths` | `640,750` | Screenshot widths. |
-| `mjml.screenshotType` | `jpg` | Screenshot type. Possible values are 'png', 'jpg', and 'jpeg'. |
-| `mjml.screenshotQuality` | `75` | Screenshot quality. |
+| `mjml.mailFromName` | ` ` | Sender name. |
+| `mjml.mailRecipients` | ` ` | Comma separated list of recipients email addresses. |
+| `mjml.mailSender` | ` ` | Sender email address. (Mailjet: must be a verified sender.) |
+| `mjml.mailSubject` | ` ` | Email subject. |
+| `mjml.mailer` | `mailjet` | Send email with Nodemailer or Mailjet. Possible values are 'nodemailer' and 'mailjet'. |
 | `mjml.mailjetAPIKey` | ` ` | Mailjet API Key. |
 | `mjml.mailjetAPISecret` | ` ` | Mailjet API Secret. |
-| `mjml.mailSender` | ` ` | Sender email address. (Mailjet: must be a verified sender.) |
-| `mjml.mailFromName` | ` ` | Sender name. |
-| `mjml.mailSubject` | ` ` | Email subject. |
-| `mjml.mailRecipients` | ` ` | Comma separated list of recipients email addresses. |
+| `mjml.minifyHtmlOutput` | `true` | Minify HTML output. |
+| `mjml.nodemailer` | `{}` | Nodemailer configuration. Please see the [Nodemailer](https://nodemailer.com) documentation for more information. |
+| `mjml.preserveFocus` | `true` | Preserve focus of Text Editor after preview open. |
+| `mjml.screenshotQuality` | `75` | Screenshot quality. |
+| `mjml.screenshotType` | `jpg` | Screenshot type. Possible values are 'png', 'jpg', and 'jpeg'. |
+| `mjml.screenshotWidth` | `650` | Screenshot width. |
+| `mjml.screenshotWidths` | `640,750` | Screenshot widths. |
+| `mjml.updateWhenTyping` | `true` | Update preview when typing. |
+| `mjml.previewBackgroundColor` | ` ` | Preview background color. |
+| `mjml.autoClosePreview` | `true` | Automatically close preview when all open MJML documents have been closed. |
+| `mjml.showSaveDialog` | `false` | Show the save as dialog instead of input box. |
+| `mjml.templateGallery` | `false` | Show the template gallery instead of quick pick. |
+| `mjml.templateGalleryAutoClose` | `true` | Automatically close template gallery when selecting a template. |
 
 ## Snippets
 
 | Trigger | URL | Content |
 | --- | --- | --- |
-| `mjall` | [mj-all](https://mjml.io/documentation/#mjml-attributes) | `<mj-all />` |
-| `mjattributes` | [mj-attributes](https://mjml.io/documentation/#mjml-attributes) | `<mj-attributes></mj-attributes>` |
-| `mjbody` | [mj-body](https://mjml.io/documentation/#mj-body) | `<mj-body></mj-body>` |
-| `mjbutton` | [mj-button](https://mjml.io/documentation/#mjml-button) | `<mj-button></mj-button>` |
-| `mjcarousel` | [mj-carousel](https://mjml.io/documentation/#mjml-carousel) | `<mj-carousel></mj-carousel>` |
-| `mjcarousel-image` | [mj-carousel-image](https://mjml.io/documentation/#mjml-carousel) | `<mj-carousel-image src="" />` |
-| `mjclass` | [mj-class](https://mjml.io/documentation/#mjml-attributes) | `<mj-class name="" />` |
-| `mjcolumn` | [mj-column](https://mjml.io/documentation/#mjml-column) | `<mj-column width=""></mj-column>` |
-| `mjcontainer` | [mj-container](https://mjml.io/documentation/#mjml-container) | `<mj-container></mj-container>` |
-| `mjdivider` | [mj-divider](https://mjml.io/documentation/#mjml-divider) | `<mj-divider />` |
-| `mjfont` | [mj-font](https://mjml.io/documentation/#mjml-font) | `<mj-font name="" href="" />` |
-| `mjgroup` | [mj-group](https://mjml.io/documentation/#mjml-group) | `<mj-group></mj-group>` |
-| `mjhead` | [mj-head](https://mjml.io/documentation/#mj-head) | `<mj-head></mj-head>` |
-| `mjhero` | [mj-hero](https://mjml.io/documentation/#mjml-hero) | `<mj-hero><mj-hero-content></mj-hero-content></mj-hero>` |
-| `mjhtml` | [mj-html](https://github.com/mjmlio/mjml/tree/master/packages/mjml-html) | `<mj-html></mj-html>` |
-| `mjimage` | [mj-image](https://mjml.io/documentation/#mjml-image) | `<mj-image src="" alt="" />` |
-| `mjinclude` | [mj-include](https://mjml.io/documentation/#mj-include) | `<mj-include path="" />` |
-| `mjinvoice` | [mj-invoice](https://mjml.io/documentation/#mjml-invoice) | `<mj-invoice></mj-invoice>` |
-| `mjinvoice-item` | [mj-invoice-item](https://mjml.io/documentation/#mjml-invoice) | `<mj-invoice-item name="" price="" quantity="" />` |
-| `mjlocation` | [mj-location](https://mjml.io/documentation/#mjml-location) | `<mj-location address="" />` |
-| `mjraw` | [mj-raw](https://mjml.io/documentation/#mjml-raw) | `<mj-raw></mj-raw>` |
-| `mjsection` | [mj-section](https://mjml.io/documentation/#mjml-section) | `<mj-section></mj-section>` |
-| `mjsocial` | [mj-social](https://mjml.io/documentation/#mjml-social) | `<mj-social />` |
-| `mjstyle` | [mj-style](https://mjml.io/documentation/#mjml-style) | `<mj-style></mj-style>` |
-| `mjtable` | [mj-table](https://mjml.io/documentation/#mjml-table) | `<mj-table></mj-table>` |
-| `mjtext` | [mj-text](https://mjml.io/documentation/#mjml-text) | `<mj-text></mj-text>` |
-| `mjtitle` | [mj-title](https://mjml.io/documentation/#mjml-title) | `<mj-title></mj-title>` |
-| `mjml` | [mjml](https://mjml.io/documentation/#mjml) | `<mjml></mjml>` |
-| `mjpreview` | [mj-preview](https://mjml.io/documentation/#mjml-preview) | `<mj-preview></mj-preview>` |
-| `mjspacer` | [mj-spacer](https://mjml.io/documentation/#mjml-spacer) | `<mj-spacer height="" />` |
-| `mjwrapper` | [mj-wrapper](https://mjml.io/documentation/#mjml-wrapper) | `<mj-wrapper></mj-wrapper>` |
-| `mjaccordion` | [mj-accordion](https://mjml.io/documentation/#mjml-accordion) | `<mj-accordion></mj-accordion>` |
-| `mjaccordion-element` | [mj-accordion-element](https://mjml.io/documentation/#mjml-accordion) | `<mj-accordion-element>...</mj-accordion-element>` |
-| `mjnavbar` | [mj-navbar](https://mjml.io/documentation/#mjml-navbar) | `<mj-navbar></mj-navbar>` |
-| `mjinline-links` | [mj-inline-links](https://mjml.io/documentation/#mjml-navbar) | `<mj-inline-links></mj-inline-links>` |
+| `mjall` | [mj-all](https://github.com/mjmlio/mjml/blob/master/packages/mjml-head-attributes/README.md) | `<mj-all />` |
+| `mjattributes` | [mj-attributes](https://github.com/mjmlio/mjml/blob/master/packages/mjml-head-attributes/README.md) | `<mj-attributes></mj-attributes>` |
+| `mjbody` | [mj-body](https://github.com/mjmlio/mjml/blob/master/packages/mjml-body/README.md) | `<mj-body></mj-body>` |
+| `mjbreakpoint` | [mj-breakpoint](https://github.com/mjmlio/mjml/blob/master/packages/mjml-head-breakpoint/README.md) | `<mj-breakpoint width="" />` |
+| `mjbutton` | [mj-button](https://github.com/mjmlio/mjml/blob/master/packages/mjml-button/README.md) | `<mj-button></mj-button>` |
+| `mjcarousel` | [mj-carousel](https://github.com/mjmlio/mjml/blob/master/packages/mjml-carousel/README.md) | `<mj-carousel></mj-carousel>` |
+| `mjcarousel-image` | [mj-carousel-image](https://github.com/mjmlio/mjml/blob/master/packages/mjml-carousel/README.md#mjml-carousel-image) | `<mj-carousel-image src="" />` |
+| `mjclass` | [mj-class](https://github.com/mjmlio/mjml/blob/master/packages/mjml-head-attributes/README.md) | `<mj-class name="" />` |
+| `mjcolumn` | [mj-column](https://github.com/mjmlio/mjml/blob/master/packages/mjml-column/README.md) | `<mj-column width=""></mj-column>` |
+| `mjdivider` | [mj-divider](https://github.com/mjmlio/mjml/blob/master/packages/mjml-divider/README.md) | `<mj-divider />` |
+| `mjfont` | [mj-font](https://github.com/mjmlio/mjml/blob/master/packages/mjml-head-font/README.md) | `<mj-font name="" href="" />` |
+| `mjgroup` | [mj-group](https://github.com/mjmlio/mjml/blob/master/packages/mjml-group/README.md) | `<mj-group></mj-group>` |
+| `mjhead` | [mj-head](https://github.com/mjmlio/mjml/blob/master/doc/guide.md#mj-head) | `<mj-head></mj-head>` |
+| `mjhero` | [mj-hero](https://github.com/mjmlio/mjml/blob/master/packages/mjml-hero/README.md) | `<mj-hero></mj-hero>` |
+| `mjimage` | [mj-image](https://github.com/mjmlio/mjml/blob/master/packages/mjml-image/README.md) | `<mj-image src="" alt="" />` |
+| `mjinclude` | [mj-include](https://github.com/mjmlio/mjml/blob/master/doc/guide.md#mj-include) | `<mj-include path="" />` |
+| `mjraw` | [mj-raw](https://github.com/mjmlio/mjml/blob/master/packages/mjml-raw/README.md) | `<mj-raw></mj-raw>` |
+| `mjsection` | [mj-section](https://github.com/mjmlio/mjml/blob/master/packages/mjml-section/README.md) | `<mj-section></mj-section>` |
+| `mjsocial` | [mj-social](https://github.com/mjmlio/mjml/blob/master/packages/mjml-social/README.md) | `<mj-social></mj-social>` |
+| `mjsocialelement` | [mj-social-element](https://github.com/mjmlio/mjml/blob/master/packages/mjml-social/README.md#mj-social-element) | `<mj-social-element></mj-social-element>` |
+| `mjstyle` | [mj-style](https://github.com/mjmlio/mjml/blob/master/packages/mjml-head-style/README.md) | `<mj-style></mj-style>` |
+| `mjtable` | [mj-table](https://github.com/mjmlio/mjml/blob/master/packages/mjml-table/README.md) | `<mj-table></mj-table>` |
+| `mjtext` | [mj-text](https://github.com/mjmlio/mjml/blob/master/packages/mjml-text/README.md) | `<mj-text></mj-text>` |
+| `mjtitle` | [mj-title](https://github.com/mjmlio/mjml/blob/master/packages/mjml-head-title/README.md) | `<mj-title></mj-title>` |
+| `mjml` | [mjml](https://github.com/mjmlio/mjml/blob/master/doc/guide.md#mjml) | `<mjml></mjml>` |
+| `mjpreview` | [mj-preview](https://github.com/mjmlio/mjml/blob/master/packages/mjml-head-preview/README.md) | `<mj-preview></mj-preview>` |
+| `mjspacer` | [mj-spacer](https://github.com/mjmlio/mjml/blob/master/packages/mjml-spacer/README.md) | `<mj-spacer height="" />` |
+| `mjwrapper` | [mj-wrapper](https://github.com/mjmlio/mjml/blob/master/packages/mjml-wrapper/README.md) | `<mj-wrapper></mj-wrapper>` |
+| `mjaccordion` | [mj-accordion](https://github.com/mjmlio/mjml/blob/master/packages/mjml-accordion/README.md) | `<mj-accordion></mj-accordion>` |
+| `mjaccordion-element` | [mj-accordion-element](https://github.com/mjmlio/mjml/blob/master/packages/mjml-accordion/README.md#mjml-accordion-element) | `<mj-accordion-element>...</mj-accordion-element>` |
+| `mjnavbar` | [mj-navbar](https://github.com/mjmlio/mjml/blob/master/packages/mjml-navbar/README.md) | `<mj-navbar></mj-navbar>` |
+| `mjnavbarlink` | [mj-navbar-link](https://github.com/mjmlio/mjml/blob/master/packages/mjml-navbar/README.md#mjml-navbar-link) | `<mj-navbar-link></mj-navbar-link>` |
 | `mjlink` | [mj-link](https://mjml.io/documentation/#mjml-navbar) | `<mj-link href=""></mj-link>` |
-| `mjlist` | [mj-list](https://github.com/mjmlio/mjml/tree/master/packages/mjml-list) | `<mj-list></mj-list>` |
 | `mjml-` | | Basic MJML Template |
 
+## Nodemailer configuration
+
+Please see the [Nodemailer](https://nodemailer.com) documentation for more information.
+
+### [Gmail](https://gmail.com)
+```json
+"mjml.nodemailer": {
+    "service": "Gmail",
+    "auth": {
+        "user": "youremail@gmail.com",
+        "pass": "password"
+    }
+}
+```
+
+### [Mailtrap](https://mailtrap.io)
+```json
+"mjml.nodemailer": {
+    "host": "smtp.mailtrap.io",
+    "port": 2525,
+    "auth": {
+        "user": "username",
+        "pass": "password"
+    }
+}
+```
+
+### [Ethereal](https://ethereal.email)
+```json
+"mjml.nodemailer": {
+    "host": "smtp.ethereal.email",
+    "port": 587,
+    "auth": {
+        "user": "youremail@ethereal.email",
+        "pass": "password"
+    }
+}
+```
+
 ## Change Log
+
+### [1.6.0] (2018-10-28)
+* [new] Configuration property `mjml.templateGallery`: Show the template gallery instead of quick pick.
+* [new] Configuration property `mjml.templateGalleryAutoClose`: Automatically close template gallery when selecting a template.
+* [#42](https://github.com/attilabuti/vscode-mjml/issues/42) [#43](https://github.com/attilabuti/vscode-mjml/issues/43): fixed beautify issues.
+* [new] [#47](https://github.com/attilabuti/vscode-mjml/issues/47) `MJML: Version`: Shows the version of MJML.
+* .mjmlconfig is working again.
+* MJML 4.2.0
+* Other improvements and bugfixes.
+
+### [1.5.1] (2018-10-03)
+* [#41](https://github.com/attilabuti/vscode-mjml/issues/41): fixed preview issue.
+* [#40](https://github.com/attilabuti/vscode-mjml/issues/40): fixed comment issue.
+
+### [1.5.0] (2018-09-28)
+* [new] Configuration property `mjml.previewBackgroundColor`: preview background color ([#39](https://github.com/attilabuti/vscode-mjml/issues/39)).
+* [new] Configuration property `mjml.showSaveDialog`: show the save as dialog instead of input box.
+* [new] Configuration property `mjml.autoClosePreview`: automatically close preview when all open MJML documents have been closed.
+* [new] `MJML: Documentation`: open the MJML documentation.
+* [new] `MJML: Search in MJML documentation`: search for the selected mj-element in the MJML documentation.
+* [#38](https://github.com/attilabuti/vscode-mjml/issues/38): added support for beautify mj-style.
+* [#35](https://github.com/attilabuti/vscode-mjml/issues/35): show more useful information on error in sending the email.
+* [#29](https://github.com/attilabuti/vscode-mjml/pull/29): merged pull request.
+* MJML syntax highlight with CSS support.
+* The `PreviewManager` has been completely rewritten.
+* Built-in MJML documentation with `Try it live` support.
+* `Search in MJML documentation` from context menu.
+* MJML 4.1.2
+* Some other improvements.
+
+### [1.4.0] (2018-07-14)
+* [#30](https://github.com/attilabuti/vscode-mjml/issues/30): fixed PhantomJS rebuild issue.
+* [#27](https://github.com/attilabuti/vscode-mjml/issues/27) [#31](https://github.com/attilabuti/vscode-mjml/issues/31): fixed rendering issue.
+* MJML 4.1.0
+* Some other improvements.
+
+### [1.3.0] (2018-05-15)
+* [new] Configuration property `mjml.autoPreview`: Automatically update preview when switching between MJML documents.
+* MJML 4.0.5
+* Various fixes and other improvements.
+
+### [1.2.1] (2018-04-15)
+* [#24](https://github.com/attilabuti/vscode-mjml/issues/24): fixed.
+* Dependency updates.
+
+### [1.2.0] (2018-03-26)
+* [new] Configuration property `mjml.mailer`: send email with Nodemailer or Mailjet. Possible values are 'nodemailer' and 'mailjet'.
+* [new] Configuration property `mjml.nodemailer`: Nodemailer configuration. Please see the [Nodemailer](https://nodemailer.com) documentation for more information.
+* Send email with Nodemailer.
+* Added support for inline images (automatically generated from local images).
+* New preview icon.
+* Some other improvements.
+* MJML 4.0.3
+
+### [1.1.0] (2018-03-18)
+* [new] Configuration property `mjml.exportType`: Specifies the file type of the output file.
+* `MJML: Export HTML`: allows to specify the exported file type (e.g. example.html or .pug).
+* MJML 4.0.2
+
+### [1.0.0] (2018-03-07)
+* [new] `MJML: Migrate`: Migrate a template from MJML 3 to MJML 4.
+* Change to [Semantic Versioning](https://semver.org/).
+* Some fixes.
+* MJML 4.0.0
+
+### [0.1.0] (2017-12-14)
+* [new] `MJML: Beautify`: [#8](https://github.com/attilabuti/vscode-mjml/issues/8) Beautify MJML code.
+* [#15](https://github.com/attilabuti/vscode-mjml/pull/15): fixed preview cache issue.
+* Some other improvements.
 
 ### [0.0.9] (2017-10-06)
 * [new] Configuration property `mjml.screenshotWidths`: Screenshot widths.
@@ -174,13 +298,15 @@ A big thanks to the people that have contributed to this project:
 
 - Christian Brevik ([@cbrevik](https://github.com/cbrevik)) - [contributions](https://github.com/attilabuti/vscode-mjml/commits?author=cbrevik))
 - Kevin Oliveira ([@kvnol](https://github.com/kvnol)) - [contributions](https://github.com/attilabuti/vscode-mjml/commits?author=kvnol))
+- Joshua Skrzypek ([@jskrzypek](https://github.com/jskrzypek)) - [contributions](https://github.com/attilabuti/vscode-mjml/commits?author=jskrzypek))
 
 ## License
 
 This extension is licensed under the [MIT License][license-url].
 
-[license-img]: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square
+[license-img]: https://img.shields.io/github/license/attilabuti/vscode-mjml.svg?style=flat-square
 [license-url]: https://raw.githubusercontent.com/attilabuti/vscode-mjml/master/LICENSE
-[vs-market-version]: https://vsmarketplacebadge.apphb.com/version-short/attilabuti.vscode-mjml.svg?style=flat-square
-[vs-market-installs]: https://vsmarketplacebadge.apphb.com/installs/attilabuti.vscode-mjml.svg?style=flat-square
+[vs-market-version]: https://img.shields.io/vscode-marketplace/v/attilabuti.vscode-mjml.svg?style=flat-square
+[vs-market-installs]: https://img.shields.io/vscode-marketplace/d/attilabuti.vscode-mjml.svg?style=flat-square
 [vs-market-url]: https://marketplace.visualstudio.com/items?itemName=attilabuti.vscode-mjml
+[dependencies-status]: https://david-dm.org/attilabuti/vscode-mjml/status.svg?style=flat-square

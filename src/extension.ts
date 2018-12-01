@@ -1,75 +1,55 @@
-"use strict";
+import { ExtensionContext, TextDocument, window, workspace } from "vscode";
 
-import * as vscode from "vscode";
-import * as path from "path";
-import * as childProcess from "child_process";
+import Beautify from "./beautify";
+import Copy from "./copy";
+import Documentation from "./documentation";
+import Email from "./email";
+import Export from "./export";
+import Linter from "./linter";
+import Migrate from "./migrate";
+import Preview from "./preview";
+import Screenshot from "./screenshot";
+import Template from "./template";
+import Version from "./version";
 
-import * as phantomJS from "phantomjs-prebuilt";
+import { isMJMLFile } from "./helper";
 
-import LintingProvider from "./lintingProvider";
-import PreviewManager from "./previewProvider";
-import ExportHTML from "./exportProvider";
-import CopyHTML from "./copyProvider";
-import Screenshot from "./screenshotProvider";
-import SendEmail from "./emailProvider";
-import Template from "./templateProvider";
+let context: ExtensionContext;
+let extensionFeatures: object[] = [];
 
-let linter: LintingProvider;
-let previewManager: PreviewManager;
-let exportHTML: ExportHTML;
-let copyHTML: CopyHTML;
-let screenshot: Screenshot;
-let sendEmail: SendEmail;
-let template: Template;
+export function activate(extensionContext: ExtensionContext) {
+    context = extensionContext;
 
-export function activate(context: vscode.ExtensionContext) {
-    // Gets a value indicating whether PhantomJS could be built
-    let phantomJSBuilt: any = undefined;
+    extensionFeatures = [
+        new Beautify(context.subscriptions),
+        new Copy(context.subscriptions),
+        new Documentation(context),
+        new Email(context.subscriptions),
+        new Export(context.subscriptions),
+        new Linter(context.subscriptions),
+        new Migrate(context.subscriptions),
+        new Preview(context),
+        new Screenshot(context.subscriptions),
+        new Template(context),
+        new Version(context.subscriptions)
+    ];
 
-    // Rebuilding PhantomJS if required
-    if (phantomJS.platform != process.platform) {
-        try {
-            let env: NodeJS.ProcessEnv = process.env;
-            env["PHANTOMJS_PLATFORM"] = process.platform;
-            env["PHANTOMJS_ARCH"] = process.arch;
-
-            vscode.window.showInformationMessage("MJML needs to be rebuilt for your current platform. Please wait for the installation to finish...");
-            process.chdir(path.join(__dirname, ".."));
-
-            childProcess.exec("npm --strict-ssl false rebuild phantomjs-prebuilt", {
-                env: env
-            }, (error: Error, stdout: string, stderr: string) => {
-                if (!error && !stderr) {
-                    phantomJSBuilt = true;
-                    vscode.window.showInformationMessage("MJML's been updated. Please restart VSCode in order to continue using MJML.");
-                }
-                else {
-                    vscode.window.showErrorMessage("MJML couldn't build the propper version of PhantomJS. Restart VSCode in order to try it again.");
-                }
-
-                screenshot = new Screenshot(context, process.platform, phantomJS.platform, phantomJSBuilt);
-            });
+    // Detect MJML 3
+    workspace.onDidOpenTextDocument((document?: TextDocument) => {
+        if (document && isMJMLFile(document) && document.getText().indexOf("mj-container") > -1) {
+            window.showInformationMessage(`MJML v3 syntax detected. Use "MJML: Migrate" to get the migrated MJML.`);
         }
-        catch (e) {
-            vscode.window.showErrorMessage("MJML couldn't build the propper version of PhantomJS. Restart VSCode in order to try it again.");
-            phantomJSBuilt = false;
-        }
-    }
-    else {
-        screenshot = new Screenshot(context, process.platform, phantomJS.platform, phantomJSBuilt);
-    }
-
-    if (vscode.workspace.getConfiguration("mjml").lintEnable) {
-        linter = new LintingProvider(context.subscriptions);
-    }
-
-    previewManager = new PreviewManager(context);
-    exportHTML = new ExportHTML(context.subscriptions);
-    copyHTML = new CopyHTML(context.subscriptions);
-    sendEmail = new SendEmail(context.subscriptions);
-    template = new Template(context.subscriptions);
+    }, null, context.subscriptions);
 }
 
 export function deactivate() {
-    previewManager.dispose();
+    for (const feature of extensionFeatures) {
+        if (typeof (feature as any).dispose === "function") {
+            (feature as any).dispose();
+        }
+    }
+
+    for (const subscription of context.subscriptions) {
+        subscription.dispose();
+    }
 }
